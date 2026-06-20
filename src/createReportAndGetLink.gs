@@ -2,8 +2,9 @@
 function buildJobReport(newRows) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   
-  // FIXED: Added _ss to ensure every batch has a unique name, even in the same minute
-  const timestamp = Utilities.formatDate(new Date(), "GMT+11", "yyyyMMdd_HHmm_ss");
+  // Use the script timezone so Sydney daylight saving does not skew batch names.
+  const timezone = Session.getScriptTimeZone() || "Australia/Sydney";
+  const timestamp = Utilities.formatDate(new Date(), timezone, "yyyyMMdd_HHmm_ss");
   const sheetName = "Batch_" + timestamp;
   
   const reportSheet = ss.insertSheet(sheetName);
