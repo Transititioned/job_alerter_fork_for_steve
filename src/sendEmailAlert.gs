@@ -1,7 +1,7 @@
 // THE DESPATCHER - SENDS EMAIL ALERTS TO MY GMAIL AKA WILL SHOW ON MY PHONE
 function dispatchMessage(reportLink, count) {
   const recipient = "autumnscribe@gmail.com";
-  const subject = `🚨 ${count} New AI/Data Job Matches`;
+  const subject = `🚨 ${count} New Financial Crime Job Matches`;
   
   const emailBody = `Job Alert Report Generated:\n\n` +
                     `New Matches: ${count}\n` +

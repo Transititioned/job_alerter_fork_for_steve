@@ -22,7 +22,7 @@ function runDedupeAndScore() {
   const idIdx = headers.indexOf("id");
   
   const orgIdx = headers.findIndex(h => h.includes("company") || h.includes("advertiser/name"));
-  const freshIdx = headers.findIndex(h => h.includes("listed") || h.includes("atutc"));
+  const freshIdx = getFreshnessColumnIndex(headers);
   const linkIdx = headers.findIndex(h => h.includes("link") || h.includes("url"));
 
   // 2. GET EXISTING IDs
@@ -91,4 +91,18 @@ function runDedupeAndScore() {
   }
 
   return newEntries; 
+}
+
+function getFreshnessColumnIndex(headers) {
+  const preferredHeaders = ["listedat", "listedatutc", "listed"];
+
+  for (const preferred of preferredHeaders) {
+    const idx = headers.indexOf(preferred);
+    if (idx !== -1) return idx;
+  }
+
+  const fuzzyListedIdx = headers.findIndex(h => h.includes("listed"));
+  if (fuzzyListedIdx !== -1) return fuzzyListedIdx;
+
+  return headers.findIndex(h => h.includes("created_at") || h.includes("createdat"));
 }
