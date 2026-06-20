@@ -1,28 +1,24 @@
 function mainControl_TEST() {
-  const jobFiles = [
-    { name: 'AI_jobs.csv', type: 'AI' },
-    { name: 'PM_jobs.csv', type: 'PM' },
-    { name: 'GRC_jobs.csv', type: 'GRC' } // 🚀 Added GRC file
+  const jobFiles = CONFIG.JOB_FILES || [
+    { name: CONFIG.SOURCE_FILE_NAME, type: 'STEVE_FINANCIAL_CRIME' }
   ];
 
   jobFiles.forEach(project => {
     try {
-      Logger.log(`=== 🚀 PROCESSING: ${project.name} ===`); 
+      Logger.log(`=== PROCESSING STEVE FEED: ${project.name} ===`); 
 
       cleanUpOldBatches(2); 
 
       // 1. IMPORT
-      importCSV(project.name, 'AI_JOBS'); 
+      const imported = importCSV(project.name, CONFIG.SHEET_IMPORT); 
+      if (!imported) {
+        Logger.log(`Skipping ${project.name}: no fresh import available.`);
+        return;
+      }
       SpreadsheetApp.flush();
 
-      // 2. LOGIC BRANCHING
-      if (project.type === 'AI') {
-        applyAiJobsFilter(); 
-      } else if (project.type === 'GRC') {
-        applyGrcJobsFilter(); // 🚀 New GRC logic branch
-      } else {
-        applyBasePmLogic(); 
-      }
+      // 2. STEVE-SPECIFIC FILTERING
+      applySteveJobsFilter();
       
       // 3. DEDUPE & SAVE
       const freshEntries = runDedupeAndScore(); 

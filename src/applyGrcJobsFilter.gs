@@ -1,7 +1,7 @@
 /**
- * GRC keyword groups: targeted search terms for GRC job matching.
+ * Steve Brown financial crime keyword groups.
  */
-const GRC_KEYWORD_GROUPS = {
+const STEVE_KEYWORD_GROUPS = {
   AML: [
     "AML",
     "AML/CTF",
@@ -67,7 +67,7 @@ const GRC_KEYWORD_GROUPS = {
   ]
 };
 
-const GRC_OUT_KEYWORDS = [
+const STEVE_OUT_KEYWORDS = [
   "graduate",
   "intern",
   "trainee",
@@ -99,32 +99,43 @@ const GRC_OUT_KEYWORDS = [
   "retail risk"
 ];
 
-const GRC_RESUME_BY_GROUP = {
-  AML: "AML",
-  CTF_MANAGER: "CTF Manager",
-  RISK_MANAGER: "Risk Manager",
-  INVESTIGATIONS_MANAGER: "Investigations Manager"
+const STEVE_RESUME_BY_GROUP = {
+  AML: "Steve Brown - Financial Crime Manager Resume.docx",
+  CTF_MANAGER: "Steve Brown - Financial Crime Manager Resume.docx",
+  RISK_MANAGER: "Steve Brown - Risk Compliance Manager Resume.docx",
+  INVESTIGATIONS_MANAGER: "Steve Brown - Investigations Manager Resume.docx"
 };
 
 /**
- * GRC LOGIC: Scans GRC job titles and maps them to targeted resume variants.
+ * Steve fork logic: scans jobs and keeps financial crime management matches.
  */
-function applyGrcJobsFilter() {
+function applySteveJobsFilter() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName("AI_JOBS");
+  const sheet = ss.getSheetByName(CONFIG.SHEET_IMPORT);
+  if (!sheet || sheet.getLastRow() <= 1) return;
+
   const data = sheet.getDataRange().getValues();
   const headers = data[0].map(h => String(h).toLowerCase());
 
   const titleIdx = headers.indexOf("title");
-  const scoreIdx = headers.indexOf("score");
-  const priorityIdx = headers.indexOf("priority");
-  const resumeIdx = headers.indexOf("resume");
-  const incIdx = headers.indexOf("included");
+  const orgIdx = headers.findIndex(h => h.includes("company") || h.includes("advertiser/name"));
+  const descIdx = headers.findIndex(h => h.includes("description") || h.includes("snippet") || h.includes("summary"));
+  const scoreIdx = ensureColumn(sheet, headers, "score");
+  const priorityIdx = ensureColumn(sheet, headers, "priority");
+  const resumeIdx = ensureColumn(sheet, headers, "resume");
+  const incIdx = ensureColumn(sheet, headers, "included");
+
+  const outputWidth = headers.length;
 
   const results = data.slice(1).map(row => {
-    const title = String(row[titleIdx] || "");
-    const excluded = hasAnyKeyword(title, GRC_OUT_KEYWORDS);
-    const matchedGroup = getFirstMatchedGrcGroup(title);
+    row = padRow(row, outputWidth);
+
+    const title = titleIdx !== -1 ? String(row[titleIdx] || "") : "";
+    const company = orgIdx !== -1 ? String(row[orgIdx] || "") : "";
+    const description = descIdx !== -1 ? String(row[descIdx] || "") : "";
+    const searchableText = [title, company, description].join(" ");
+    const excluded = hasAnyKeyword(searchableText, STEVE_OUT_KEYWORDS);
+    const matchedGroup = getFirstMatchedSteveGroup(searchableText);
 
     if (excluded || !matchedGroup) {
       row[scoreIdx] = 0;
@@ -138,22 +149,26 @@ function applyGrcJobsFilter() {
 
     row[scoreIdx] = meta.score;
     row[priorityIdx] = meta.priority;
-    row[resumeIdx] = GRC_RESUME_BY_GROUP[matchedGroup] || meta.resume;
+    row[resumeIdx] = STEVE_RESUME_BY_GROUP[matchedGroup] || meta.resume;
     row[incIdx] = true;
 
     return row;
   });
 
   if (results.length > 0) {
-    sheet.getRange(2, 1, results.length, data[0].length).setValues(results);
+    sheet.getRange(2, 1, results.length, outputWidth).setValues(results);
   }
 
-  Logger.log(`✅ GRC Logic: Successfully processed ${results.length} jobs.`);
+  Logger.log(`✅ Steve filter: processed ${results.length} jobs.`);
 }
 
-function getFirstMatchedGrcGroup(text) {
-  for (const groupName in GRC_KEYWORD_GROUPS) {
-    if (hasAnyKeyword(text, GRC_KEYWORD_GROUPS[groupName])) {
+function applyGrcJobsFilter() {
+  applySteveJobsFilter();
+}
+
+function getFirstMatchedSteveGroup(text) {
+  for (const groupName in STEVE_KEYWORD_GROUPS) {
+    if (hasAnyKeyword(text, STEVE_KEYWORD_GROUPS[groupName])) {
       return groupName;
     }
   }
@@ -167,4 +182,22 @@ function hasAnyKeyword(text, keywords) {
     const cleanKeyword = String(keyword || "").toLowerCase();
     return cleanText.includes(cleanKeyword);
   });
+}
+
+function ensureColumn(sheet, headers, headerName) {
+  let idx = headers.indexOf(headerName);
+  if (idx === -1) {
+    idx = headers.length;
+    sheet.getRange(1, idx + 1).setValue(headerName.charAt(0).toUpperCase() + headerName.slice(1));
+    headers.push(headerName);
+  }
+  return idx;
+}
+
+function padRow(row, width) {
+  const padded = row.slice();
+  while (padded.length < width) {
+    padded.push("");
+  }
+  return padded;
 }

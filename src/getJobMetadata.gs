@@ -1,42 +1,39 @@
 /**
- * REFINED BRAIN: Focused logic for AI, GRC, and Release/Change Management.
+ * Steve Brown fork: score and resume routing for financial crime roles.
  */
 function getJobMetadata(title) {
-  const t = title.toLowerCase();
+  const t = String(title || "").toLowerCase();
 
-  // --- 1. AI & TRANSFORMATION (Priority 1) ---
-  const aiKeywords = ["ai", "digital transformation", "strategy", "hod", "director"];
-  if (aiKeywords.some(word => t.includes(word))) {
-    return { score: 80, resume: "AI_HoD_Transform_Resume", priority: 1 };
-  }
-
-  // --- 2. GRC & RISK (Priority 1 - Specialized by Archetype) ---
-  if (t.includes("audit") || t.includes("tech risk") || t.includes("itgc")) {
-    return { score: 95, resume: "Kevin Edwards Resume(internal audit).docx", priority: 1 };
-  }
-  if (t.includes("risk") || t.includes("cps230") || t.includes("cps234") || t.includes("compliance")) {
-    return { score: 90, resume: "Kevin Edwards - Resume (Risk Mgr).docx", priority: 1 };
-  }
-  if (t.includes("servicenow") || t.includes("grc") || t.includes("framework")) {
-    return { score: 85, resume: "Kevin Edwards - Resume(GPM RC tool).docx", priority: 2 };
-  }
-
-  // --- 3. RELEASE & CHANGE MANAGEMENT (Priority 2) ---
-  const rmKeywords = ["release", "cutover", "environment", "deployment", "change control", "implementation"];
-  if (rmKeywords.some(word => t.includes(word))) {
-    // If it's a technical implementation role
-    if (t.includes("technical") || t.includes("infrastructure") || t.includes("environment")) {
-      return { score: 80, resume: "Kevin Edwards - Resume (RM + Environments).docx", priority: 2 };
+  if (hasAnySteveKeyword(t, ["head of", "director", "senior manager", "lead"])) {
+    if (hasAnySteveKeyword(t, ["financial crime", "aml", "ctf", "sanctions", "transaction monitoring"])) {
+      return { score: 95, resume: "Steve Brown - Financial Crime Manager Resume.docx", priority: 1 };
     }
-    // Default change/release role
-    return { score: 75, resume: "Kevin Edwards - Resume (change and release).docx", priority: 2 };
   }
 
-  // --- 4. BASE PM FALLBACK (Priority 3) ---
-  // No matching specialized keywords? Fall back to standard PM resume.
+  if (hasAnySteveKeyword(t, ["financial crime manager", "aml manager", "aml/ctf manager", "ctf manager"])) {
+    return { score: 95, resume: "Steve Brown - Financial Crime Manager Resume.docx", priority: 1 };
+  }
+
+  if (hasAnySteveKeyword(t, ["investigations manager", "financial crime investigations", "fraud investigations"])) {
+    return { score: 90, resume: "Steve Brown - Investigations Manager Resume.docx", priority: 1 };
+  }
+
+  if (hasAnySteveKeyword(t, ["risk manager", "financial crime risk", "risk and compliance", "compliance manager"])) {
+    return { score: 85, resume: "Steve Brown - Risk Compliance Manager Resume.docx", priority: 2 };
+  }
+
+  if (hasAnySteveKeyword(t, ["kyc", "cdd", "edd", "sanctions", "transaction monitoring", "austrac"])) {
+    return { score: 75, resume: "Steve Brown - Financial Crime Manager Resume.docx", priority: 2 };
+  }
+
   return { 
-    score: 20, 
-    resume: "Base_Resume_PM.docx", 
+    score: 20,
+    resume: "Steve Brown - Base Resume.docx",
     priority: 3 
   };
+}
+
+function hasAnySteveKeyword(text, keywords) {
+  const cleanText = String(text || "").toLowerCase();
+  return keywords.some(keyword => cleanText.includes(String(keyword || "").toLowerCase()));
 }

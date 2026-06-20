@@ -71,7 +71,7 @@ function runDedupeAndScore() {
       newEntries.push([
         meta.score || 20, 
         meta.priority || 3, 
-        meta.resume || "Base_Resume_PM",
+        meta.resume || "Steve Brown - Base Resume.docx",
         rawTitle.split('|')[0].trim(), 
         orgIdx !== -1 ? row[orgIdx] : "N/A", 
         freshIdx !== -1 ? row[freshIdx] : "New", 

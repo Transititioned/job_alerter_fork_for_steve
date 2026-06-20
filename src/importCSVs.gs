@@ -9,7 +9,7 @@ function importCSV(fileName, targetSheetName) {
 
   if (fileList.length === 0) {
     Logger.log(`⚠️ No files found named "${fileName}"`);
-    return;
+    return false;
   }
 
   // 2. SORT: Newest to Oldest so we pick the freshest data
@@ -28,6 +28,9 @@ function importCSV(fileName, targetSheetName) {
   if (csvData.length > 0) {
     sheet.getRange(1, 1, csvData.length, csvData[0].length).setValues(csvData);
     Logger.log(`✅ Success: Imported ${csvData.length} rows from ${fileName}.`);
+  } else {
+    Logger.log(`⚠️ File "${fileName}" did not contain CSV rows.`);
+    return false;
   }
 
   // 4. CLEANUP: Only trash older versions of THIS specific file
@@ -37,4 +40,6 @@ function importCSV(fileName, targetSheetName) {
       Logger.log(`🗑️ Trashed old version of ${fileName} from ${fileList[i].getLastUpdated()}`);
     }
   }
+
+  return true;
 }

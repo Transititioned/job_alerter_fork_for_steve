@@ -23,7 +23,7 @@ function Apify_Integration_Gateway(e) {
  * Helper to poke the Apify API
  */
 function executeApifyScrape(taskId, type) {
-  const API_KEY = 'PUT_your_TOKEN_here;
+  const API_KEY = 'PUT_your_TOKEN_here';
   const url = `https://api.apify.com/v2/actor-tasks/${taskId}/runs?token=${API_KEY}`;
   
   const options = {

@@ -33,15 +33,13 @@ Use placeholders for secrets. Do not commit real API tokens.
 
 | File | Purpose | Source |
 | --- | --- | --- |
-| `AI_jobs.csv` | Raw AI jobs export. | Apify/Drive |
-| `PM_jobs.csv` | Raw PM jobs export. | Apify/Drive |
-| `GRC_jobs.csv` | Raw GRC jobs export. | Apify/Drive |
+| `MrBrownFinancialCrimesMgr.csv` | Raw Steve Brown financial-crime jobs export. | Apify/Drive |
 
 ## Sheet Tabs
 
 | Tab | Purpose |
 | --- | --- |
-| `AI_JOBS` | Raw imported jobs staging tab. |
+| `AI_JOBS` | Raw imported jobs staging tab. Kept under the existing name to avoid sheet churn. |
 | `Jobs_MASTER` | Permanent deduped/scored job database. |
 
 ## Triggers
@@ -70,4 +68,3 @@ Use placeholders for secrets. Do not commit real API tokens.
 - Confirm any web app deployment is set to the intended access level.
 - Confirm Apify task IDs point to the fork's intended scraping setup.
 - Confirm alert emails go to the intended recipient before enabling triggers.
-
