@@ -1,6 +1,7 @@
 // THE DESPATCHER - SENDS EMAIL ALERTS TO MY GMAIL AKA WILL SHOW ON MY PHONE
 function dispatchMessage(reportLink, count) {
   const recipient = "autumnscribe@gmail.com";
+  const ccRecipient = "stephenbrown34@gmail.com";
   const subject = `🚨 ${count} New Financial Crime Job Matches`;
   
   const emailBody = `Job Alert Report Generated:\n\n` +
@@ -10,9 +11,10 @@ function dispatchMessage(reportLink, count) {
 
   MailApp.sendEmail({
     to: recipient,
+    cc: ccRecipient,
     subject: subject,
     body: emailBody
   });
 
-  Logger.log(`✅ Message Dispatched to ${recipient}`);
+  Logger.log(`✅ Message Dispatched to ${recipient}; cc ${ccRecipient}`);
 }
