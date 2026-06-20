@@ -22,7 +22,12 @@ function importCSV(fileName, targetSheetName) {
   // 3. IMPORT to the landing tab
   const csvData = Utilities.parseCsv(newestFile.getBlob().getDataAsString());
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(targetSheetName);
+  let sheet = ss.getSheetByName(targetSheetName);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(targetSheetName);
+    Logger.log(`✅ Created missing staging sheet: ${targetSheetName}`);
+  }
   
   sheet.clearContents();
   if (csvData.length > 0) {
